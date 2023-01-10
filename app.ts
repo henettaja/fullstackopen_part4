@@ -13,7 +13,7 @@ if (!config.MONGODB_URI) {
   throw new Error('Environment variable MONGODB_URI has not been set');
 }
 
-console.info('connecting to', config.MONGODB_URI);
+console.info('connecting to', config.MONGODB_URI.split(':')[1]);
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
