@@ -7,6 +7,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 const app = express();
+mongoose.set('strictQuery', false);
 
 if (!config.MONGODB_URI) {
   throw new Error('Environment variable MONGODB_URI has not been set');
