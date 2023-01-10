@@ -1,7 +1,8 @@
 const blogsRouter = require('express').Router();
 import { Blog } from '../models/blog';
 
-blogsRouter.get('/api/blogs', (request, response) => {
+blogsRouter.get('/', (request, response, next) => {
+  logger.info('↩️ Fetching data from MongoDB');
   Blog
     .find({})
     .then(blogs => {
@@ -9,8 +10,15 @@ blogsRouter.get('/api/blogs', (request, response) => {
     });
 });
 
-blogsRouter.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body);
+blogsRouter.post('/', (request, response, next) => {
+  logger.info('⤴️ Posting data to MongoDB\n', request.body);
+
+  const blog = new Blog({
+    title: request.body.title,
+    author: request.body.author,
+    url: request.body.url,
+    likes: request.body.likes
+  });
 
   blog
     .save()
