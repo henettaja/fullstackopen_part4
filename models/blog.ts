@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-interface IBlog {
+export interface IBlog {
   title: string;
   author: string;
   url: string;
