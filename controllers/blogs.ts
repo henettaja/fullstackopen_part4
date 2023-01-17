@@ -2,17 +2,13 @@ const blogsRouter = require('express').Router();
 import logger from '../utils/logger';
 import { Blog } from '../models/blog';
 
-blogsRouter.get('/', (request, response, next) => {
+blogsRouter.get('/', async (request, response) => {
   logger.info('↩️ Fetching data from MongoDB');
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs);
-    })
-    .catch((error) => next(error));
+  const blogs = await Blog.find({});
+  response.json(blogs);
 });
 
-blogsRouter.post('/', (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
   logger.info('⤴️ Posting data to MongoDB\n', request.body);
 
   const blog = new Blog({
@@ -22,12 +18,8 @@ blogsRouter.post('/', (request, response, next) => {
     likes: request.body.likes
   });
 
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result);
-    })
-    .catch((error) => next(error));
+  const result = await blog.save();
+  response.status(201).json(result);
 });
 
 export default blogsRouter;
