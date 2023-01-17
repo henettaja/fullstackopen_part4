@@ -42,19 +42,35 @@ describe('total likes', function () {
   });
 });
 
-describe('most likes', function () {
-  test('of a list returns right value', () => {
-    const result = listHelper.favoriteBlog(longListOfBlogs);
+describe('most liked blog', function () {
+  test('of a list of blogs returns right value', () => {
+    const result = blogHelper.favoriteBlog(longListOfBlogs);
+    const expectedBlog: IBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    };
 
-    expect(result).toEqual(longListOfBlogs[2]);
+    expect(result).toEqual(expectedBlog);
   });
 
 });
 
-describe('most blogs', function () {
-  test('of a list returns right value', () => {
-    const result = listHelper.favoriteBlog(longListOfBlogs);
+describe('most blogs from an author', function () {
+  test('of a list of blogs returns right value', () => {
+    const result = blogHelper.authorWithMostBlogs( longListOfBlogs);
+    const expectedAuthor: IAuthor = { name: 'Robert C. Martin', amountOfBlogs: 3, amountOfLikes: 12 };
 
-    expect(result).toEqual(longListOfBlogs[2]);
+    expect(result).toEqual(expectedAuthor);
+  });
+});
+
+describe('most liked author', function () {
+  test('of a list of blogs returns right value', () => {
+    const result = blogHelper.mostLikedAuthor(longListOfBlogs);
+    const expectedAuthor: IAuthor = { name: 'Edsger W. Dijkstra', amountOfBlogs: 2, amountOfLikes: 17 };
+
+    expect(result).toEqual(expectedAuthor);
   });
 });

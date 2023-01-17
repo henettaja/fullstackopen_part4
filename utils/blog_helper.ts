@@ -58,6 +58,34 @@ const favoriteBlog = (blogs: IBlog[]): IBlog => {
   });
 };
 
+const getAuthorsFromListOfBlogs = (blogs: IBlog[]): IAuthor[] => {
+  const result = blogs.reduce((objectOfAuthors, { author, likes }) => {
+    objectOfAuthors[author] ??= { name: author, amountOfBlogs: 0, amountOfLikes: 0 };
+    objectOfAuthors[author].amountOfBlogs++;
+    objectOfAuthors[author].amountOfLikes += likes;
+    return objectOfAuthors;
+  }, {} as Record<string, IAuthor>);
+  return Object.values(result);
+};
+
+const authorWithMostBlogs = (blogs: IBlog[]): IAuthor => {
+  return getAuthorsFromListOfBlogs(blogs).reduce((prevous, current): IAuthor =>
+    prevous.amountOfBlogs > current.amountOfBlogs ? prevous : current
+  );
+};
+
+const mostLikedAuthor = (blogs: IBlog[]) => {
+  return getAuthorsFromListOfBlogs(blogs).reduce((previous, current) =>
+    previous.amountOfLikes > current.amountOfLikes ? previous : current
+  );
+  /*blogs.reduce((prevBlog, currentBlog, currentIndex, array) => {
+    return array.filter((blog) => blog.author === prevBlog.author).reduce((authorsPrevBlog, authorsCurrentBlog) => {
+      return { ...authorsPrevBlog, likes: authorsPrevBlog.likes += authorsCurrentBlog.likes };
+    });
+  });*/
+};
+
+
 export default {
-  dummy, totalLikes, favoriteBlog
+  dummy, totalLikes, favoriteBlog, amountOfBlogsByAuthor: getAuthorsFromListOfBlogs, authorWithMostBlogs, mostLikedAuthor
 };
