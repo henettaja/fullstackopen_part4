@@ -6,7 +6,7 @@ import { longListOfBlogs } from '../utils/blog_helper';
 test('dummy returns one', () => {
   const blogs = [];
 
-  const result = listHelper.dummy(blogs);
+  const result = blogHelper.dummy(blogs);
 
   expect(result).toBe(1);
 });
@@ -15,7 +15,7 @@ describe('total likes', function () {
   test('of empty list is zero', () => {
     const emptyListOfBlogs: IBlog[] = [];
 
-    const result = listHelper.totalLikes(emptyListOfBlogs);
+    const result = blogHelper.totalLikes(emptyListOfBlogs);
 
     expect(result).toBe(0);
   });
@@ -30,13 +30,13 @@ describe('total likes', function () {
       },
     ];
 
-    const result = listHelper.totalLikes(listWithOneBlog);
+    const result = blogHelper.totalLikes(listWithOneBlog);
 
     expect(result).toBe(listWithOneBlog[0].likes);
   });
 
   test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(longListOfBlogs);
+    const result = blogHelper.totalLikes(longListOfBlogs);
 
     expect(result).toBe(36);
   });
