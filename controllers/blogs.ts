@@ -1,3 +1,4 @@
+import 'express-async-errors';
 const blogsRouter = require('express').Router();
 import logger from '../utils/logger';
 import { Blog } from '../models/blog';

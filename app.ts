@@ -1,9 +1,9 @@
+import 'express-async-errors';
 import config from './utils/config';
 import blogsRouter from './controllers/blogs';
 import middleware from './utils/middleware';
 import logger from './utils/logger';
 import express from 'express';
-import 'express-async-errors';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
