@@ -8,10 +8,10 @@ export interface IBlog {
 }
 
 const blogSchema = new Schema<IBlog>({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
+  title: { type: 'string', required: true },
+  author: { type: 'string' },
+  url: { type: 'string', required: true },
+  likes: { type: 'number', required: true }
 });
 
 blogSchema.set('toJSON', {
