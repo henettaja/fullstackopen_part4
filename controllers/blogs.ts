@@ -10,15 +10,15 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
-  logger.info('⤴️ Posting data to MongoDB\n', request.body);
 
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
-    likes: request.body.likes
+    likes: request.body.likes || 0
   });
 
+  logger.info('⤴️ Posting data to MongoDB\n', request.body);
   const result = await blog.save();
   response.status(201).json(result);
 });
