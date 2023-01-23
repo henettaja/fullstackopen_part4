@@ -10,11 +10,12 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
 };
 
 const unknownEndpoint = (request: Request, response: Response) => {
+  logger.error('🛑 Request was made to an unkown endpoint');
   response.status(404).send({ error: 'unknown endpoint' });
 };
 
 const errorHandler = (error: Error, request: Request, response: Response, next: NextFunction) => {
-  logger.error(error.message);
+  logger.error('🛑 Error handler received error:\n', error.message);
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' });
