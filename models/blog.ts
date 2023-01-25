@@ -5,6 +5,7 @@ export interface IBlog {
   author: string;
   url: string;
   likes: number
+  id?: string
 }
 
 const blogSchema = new Schema<IBlog>({
