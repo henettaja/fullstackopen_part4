@@ -90,6 +90,29 @@ describe('API operation should succeed', () => {
     expect(response.body.length).toBe(initialBlogs.length - 1);
     expect(response.body).not.toContainEqual(blog);
   });
+
+  test('Can successfully update blogs', async () => {
+    const blog = (await api
+      .get('/api/blogs/')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)).body[0];
+
+    const updatedBlog = { ...blog, likes: blog.likes + 3 };
+
+    const returnedBlog = (await api
+      .put(`/api/blogs/${blog.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)).body;
+
+    const responseBody = (await api
+      .get('/api/blogs/')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)).body;
+
+    expect(returnedBlog.likes).toBe(blog.likes + 3);
+    expect(responseBody).toContainEqual(updatedBlog);
+  });
 });
 
 describe('API operation should throw error', () => {
