@@ -71,6 +71,25 @@ describe('API operation should succeed', () => {
     expect(savedBlog.likes).toBeDefined();
     expect(savedBlog.likes).toBe(0);
   });
+
+  test('Can successfully delete blogs', async () => {
+    const blog = (await api
+      .get('/api/blogs/')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)).body[0];
+
+    await api
+      .delete(`/api/blogs/${blog.id}`)
+      .expect(204);
+
+    const response = await api
+      .get('/api/blogs/')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.length).toBe(initialBlogs.length - 1);
+    expect(response.body).not.toContainEqual(blog);
+  });
 });
 
 describe('API operation should throw error', () => {
