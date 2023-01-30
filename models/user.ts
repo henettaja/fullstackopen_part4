@@ -1,16 +1,16 @@
 import { model, Schema } from 'mongoose';
-import { uniqueValidator } from 'mongoose-unique-validator';
+import uniqueValidator from 'mongoose-unique-validator';
 
 export interface IUser {
-  username: { type: 'string', required: true, unique: true },
-  name: { type: 'string', required: true },
-  passwordHash: { type: 'string', required: true }
+  username: string,
+  name: string,
+  passwordHash: string
 }
 
 const userSchema = new Schema<IUser>({
-  username: String,
-  name: String,
-  passwordHash: String
+  username: { type: 'string', required: true, unique: true, minLength: 3 },
+  name: { type: 'string', required: true },
+  passwordHash:  { type: 'string', required: true }
 });
 
 userSchema.plugin(uniqueValidator);
