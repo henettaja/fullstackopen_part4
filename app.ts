@@ -1,6 +1,7 @@
 import 'express-async-errors';
 import config from './utils/config';
 import blogsRouter from './controllers/blogs';
+import usersRouter from './controllers/users';
 import middleware from './utils/middleware';
 import logger from './utils/logger';
 import express from 'express';
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use('/api/blogs', blogsRouter);
+app.use('/api/users', usersRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
