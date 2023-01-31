@@ -1,5 +1,7 @@
-import logger from './logger';
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import logger from './logger';
+import User from '../models/user';
 
 const requestLogger = (request: Request, response: Response, next: NextFunction) => {
   logger.info('Method:', request.method);
@@ -15,6 +17,25 @@ const tokenExtractor = (request, response, next) => {
     request.token = authorization.replace('Bearer ', '');
   }
   next();
+};
+
+const userExtractor = async (request, response, next) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+
+  if (!decodedToken.id) {
+    response.status(401).json({ error: 'token invalid' });
+    next();
+  }
+
+  const user = await User.findById(decodedToken.id);
+
+  if ( !user ) {
+    response.status(404).json({ error: 'User not found' });
+    next();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  request.user = user!;
 };
 
 const unknownEndpoint = (request: Request, response: Response) => {
@@ -38,6 +59,7 @@ const errorHandler = (error: Error, request: Request, response: Response, next: 
 export default {
   requestLogger,
   tokenExtractor,
+  userExtractor,
   unknownEndpoint,
   errorHandler
 };
