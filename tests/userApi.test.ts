@@ -34,7 +34,8 @@ describe('User API', () => {
       const newUser: IUser = {
         username :'donald',
         name :'Donald Duck',
-        password :'313'
+        password :'313',
+        blogs: []
       };
 
       await postUserToApi(newUser);
@@ -52,7 +53,8 @@ describe('User API', () => {
       const userWithTooShortPassword: IUser = {
         username :'donald',
         name :'Donald Duck',
-        password :'pw'
+        password :'pw',
+        blogs: []
       };
 
       await postUserToApi(userWithTooShortPassword, 400);
