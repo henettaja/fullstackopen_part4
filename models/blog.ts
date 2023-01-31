@@ -1,5 +1,4 @@
 import { model, Schema, ObjectId } from 'mongoose';
-import { IUser } from './user';
 
 export interface IBlog {
   title: string;
@@ -7,7 +6,7 @@ export interface IBlog {
   url: string;
   likes: number
   id?: string;
-  user?: IUser | ObjectId;
+  user: ObjectId;
 }
 
 const blogSchema = new Schema<IBlog>({

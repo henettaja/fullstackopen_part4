@@ -1,13 +1,12 @@
 import { model, ObjectId, Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import { IBlog } from './blog';
 
 export interface IUser {
   username: string;
   name: string;
   passwordHash?: string;
   password?: string;
-  blogs?: IBlog[] | ObjectId;
+  blogs: ObjectId[];
 }
 
 const userSchema = new Schema<IUser>({
