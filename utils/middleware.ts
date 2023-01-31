@@ -9,6 +9,14 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
   next();
 };
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '');
+  }
+  next();
+};
+
 const unknownEndpoint = (request: Request, response: Response) => {
   logger.error('🛑 Request was made to an unkown endpoint');
   response.status(404).send({ error: 'unknown endpoint' });
@@ -29,6 +37,7 @@ const errorHandler = (error: Error, request: Request, response: Response, next: 
 
 export default {
   requestLogger,
+  tokenExtractor,
   unknownEndpoint,
   errorHandler
 };
