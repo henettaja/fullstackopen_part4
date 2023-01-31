@@ -29,4 +29,6 @@ blogSchema.set('toJSON', {
   }
 });
 
-export const Blog = model('Blog', blogSchema);
+const Blog = model('Blog', blogSchema);
+
+export default Blog;

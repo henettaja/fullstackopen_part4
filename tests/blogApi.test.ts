@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import app from '../app';
 import mongoose from 'mongoose';
-import { Blog } from '../models/blog';
+import Blog from '../models/blog';
 import { longListOfBlogs as initialBlogs } from '../utils/blog_helper';
 
 const api = supertest(app);
