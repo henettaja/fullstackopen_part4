@@ -6,6 +6,12 @@ import { body, validationResult } from 'express-validator';
 const usersRouter = require('express').Router();
 const saltRounds = 10;
 
+usersRouter.get('/', async (request, response) => {
+  const users = await User.find({}).populate('blogs', { title: 1, author: 1, url: 1, likes: 1 });
+
+  logger.info('↩️ Fetching blogs from db');
+  response.json(users);
+});
 usersRouter.post('/',
   body('password').isLength({ min:3 }),
   async (request, response) => {
@@ -24,11 +30,5 @@ usersRouter.post('/',
     const result = await user.save();
     response.status(201).send(result);
   });
-usersRouter.get('/', async (request, response) => {
-  const users = await User.find({});
-
-  logger.info('↩️ Fetching blogs from db');
-  response.json(users);
-});
 
 export default usersRouter;

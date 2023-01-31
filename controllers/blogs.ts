@@ -6,7 +6,7 @@ const blogsRouter = require('express').Router();
 
 blogsRouter.get('/', async (request, response) => {
   logger.info('↩️ Fetching blogs from db');
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
   response.json(blogs);
 });
 
