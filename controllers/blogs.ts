@@ -1,6 +1,7 @@
 import 'express-async-errors';
-import logger from '../utils/logger';
-import { Blog } from '../models/blog';
+import Blog from '../models/blog';
+import { IUser } from '../models/user';
+import { decodeTokenAndFindUser } from '../utils/user_helper';
 
 const blogsRouter = require('express').Router();
 
@@ -10,25 +11,32 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
+  const user = await decodeTokenAndFindUser(request, response);
 
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
-    likes: request.body.likes || 0
+    likes: request.body.likes || 0,
+    user: user.id
   });
 
-  logger.info('⤴️ Posting a blog to db\n', request.body);
-  const result = await blog.save();
-  response.status(201).json(result);
+  const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog.id);
+  await user.save();
+  response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
+  const user = await decodeTokenAndFindUser(request, response);
   const idToRemove = request.params.id;
 
-  logger.info(`⌫ Deleting a blog with id ${idToRemove} from db`);
-  await Blog.deleteOne({ _id: idToRemove });
+  const blogToDelete = await Blog.findOne({ _id: idToRemove });
 
+  if ( !blogToDelete || blogToDelete.user.toString() !== user.id.toString() ) {
+    return response.status(401).send({ 'error': 'User does not have rights to delete requested blog' });
+  }
+  await blogToDelete.deleteOne();
   response.status(204).send();
 });
 
@@ -37,7 +45,6 @@ blogsRouter.put('/:id', async (request, response) => {
 
   const updatedBlog = request.body;
 
-  logger.info(`⌫ Updating a blog with id ${idToUpdate} from db`);
   const result = await Blog.findByIdAndUpdate(idToUpdate, updatedBlog, { new: true });
 
   response.status(200).json(result);
