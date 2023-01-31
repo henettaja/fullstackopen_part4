@@ -1,16 +1,20 @@
-import { model, Schema } from 'mongoose';
+import { model, ObjectId, Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+import { IBlog } from './blog';
 
 export interface IUser {
-  username: string,
-  name: string,
-  passwordHash: string
+  username: string;
+  name: string;
+  passwordHash?: string;
+  password?: string;
+  blogs?: IBlog[] | ObjectId;
 }
 
 const userSchema = new Schema<IUser>({
   username: { type: 'string', required: true, unique: true, minLength: 3 },
   name: { type: 'string', required: true },
-  passwordHash:  { type: 'string', required: true }
+  passwordHash:  { type: 'string', required: true },
+  blogs: [{ type: Schema.Types.ObjectId, ref: 'Blog' }]
 });
 
 userSchema.plugin(uniqueValidator);
