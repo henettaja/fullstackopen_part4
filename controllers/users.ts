@@ -2,14 +2,13 @@ import User from '../models/user';
 import logger from '../utils/logger';
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
+import { IBlog } from '../models/blog';
 
 const usersRouter = require('express').Router();
 const saltRounds = 10;
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({}).populate('blogs', { title: 1, author: 1, url: 1, likes: 1 });
-
-  logger.info('↩️ Fetching blogs from db');
+  const users = await User.find({}).populate<{ blogs: IBlog[] }>('blogs', { title: 1, author: 1, url: 1, likes: 1 });
   response.json(users);
 });
 usersRouter.post('/',
