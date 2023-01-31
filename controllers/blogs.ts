@@ -1,7 +1,6 @@
 import 'express-async-errors';
 import Blog from '../models/blog';
 import { IUser } from '../models/user';
-import { decodeTokenAndFindUser } from '../utils/user_helper';
 
 const blogsRouter = require('express').Router();
 
@@ -11,7 +10,7 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const user = await decodeTokenAndFindUser(request, response);
+  const user = request.user;
 
   const blog = new Blog({
     title: request.body.title,
@@ -28,7 +27,7 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const user = await decodeTokenAndFindUser(request, response);
+  const user = request.user;
   const idToRemove = request.params.id;
 
   const blogToDelete = await Blog.findOne({ _id: idToRemove });
