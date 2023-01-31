@@ -4,11 +4,13 @@ export const listOfUsers: IUser[] = [
   {
     username: 'mluukkai',
     name: 'Matti Luukkainen',
-    password: 'password'
+    password: 'password',
+    blogs: []
   },
   {
     username: 'hellas',
     name: 'Arto Hellas',
-    password: 'salasana'
+    password: 'salasana',
+    blogs: []
   }
 ];
