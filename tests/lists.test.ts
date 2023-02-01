@@ -2,6 +2,7 @@ import { IBlog } from '../models/blog';
 import blogHelper from '../utils/blog_helper';
 import { IAuthor } from '../models/author';
 import { longListOfBlogs } from '../utils/blog_helper';
+import { Schema } from 'mongoose';
 
 test('dummy returns one', () => {
   const blogs = [];
@@ -27,6 +28,7 @@ describe('total likes', function () {
         author: 'Michael Chan',
         url: 'https://reactpatterns.com/',
         likes: 7,
+        user: {} as Schema.Types.ObjectId
       },
     ];
 
@@ -48,8 +50,9 @@ describe('most liked blog', function () {
     const expectedBlog: IBlog = {
       title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
-      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      url: 'https://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
+      user: {} as Schema.Types.ObjectId
     };
 
     expect(result).toEqual(expectedBlog);
