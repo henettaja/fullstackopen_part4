@@ -20,22 +20,29 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
+  if ( !request.token ) {
+    next();
+    return;
+  }
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
-  if (!decodedToken.id) {
-    response.status(401).json({ error: 'token invalid' });
+  if ( !decodedToken.id ) {
+    response.status(401).json({ error :'token invalid' });
     next();
+    return;
   }
 
   const user = await User.findById(decodedToken.id);
 
   if ( !user ) {
-    response.status(404).json({ error: 'User not found' });
+    response.status(404).json({ error :'User not found' });
     next();
+    return;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   request.user = user!;
+  next();
 };
 
 const unknownEndpoint = (request: Request, response: Response) => {
