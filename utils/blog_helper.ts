@@ -78,11 +78,6 @@ const mostLikedAuthor = (blogs: IBlog[]) => {
   return getAuthorsFromListOfBlogs(blogs).reduce((previous, current) =>
     previous.amountOfLikes > current.amountOfLikes ? previous : current
   );
-  /*blogs.reduce((prevBlog, currentBlog, currentIndex, array) => {
-    return array.filter((blog) => blog.author === prevBlog.author).reduce((authorsPrevBlog, authorsCurrentBlog) => {
-      return { ...authorsPrevBlog, likes: authorsPrevBlog.likes += authorsCurrentBlog.likes };
-    });
-  });*/
 };
 
 
