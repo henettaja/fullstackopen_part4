@@ -12,5 +12,11 @@ export const listOfUsers: IUser[] = [
     name: 'Arto Hellas',
     password: 'salasana',
     blogs: []
+  },
+  {
+    username: 'moshi',
+    name: 'Moshi',
+    password: 'salainenmoshi',
+    blogs: []
   }
 ];
