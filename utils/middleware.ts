@@ -12,7 +12,7 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
 };
 
 const tokenExtractor = (request, response, next) => {
-  const authorization = request.get('authorization');
+  const authorization = request.get('Authorization');
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '');
   }
@@ -20,10 +20,6 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
-  if ( !request.token ) {
-    next();
-    return;
-  }
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
   if ( !decodedToken.id ) {
@@ -40,13 +36,12 @@ const userExtractor = async (request, response, next) => {
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  request.user = user!;
+  request.user = user;
   next();
 };
 
 const unknownEndpoint = (request: Request, response: Response) => {
-  logger.error('🛑 Request was made to an unkown endpoint');
+  logger.error('🛑 The above request was made to an unknown endpoint');
   response.status(404).send({ error: 'unknown endpoint' });
 };
 
@@ -58,6 +53,9 @@ const errorHandler = (error: Error, request: Request, response: Response, next: 
   }
   if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message });
+  }
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({ error: 'token missing or invalid' });
   }
 
   next(error);

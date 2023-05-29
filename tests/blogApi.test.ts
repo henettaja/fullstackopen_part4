@@ -1,23 +1,43 @@
 import supertest from 'supertest';
 import app from '../app';
 import mongoose from 'mongoose';
-import Blog from '../models/blog';
+import Blog, { IDehydratedBlog } from '../models/blog';
 import { longListOfBlogs as initialBlogs } from '../utils/blog_helper';
+import User from '../models/user';
+import { listOfUsers as initialUsers } from '../utils/user_helper';
 
 const api = supertest(app);
+let loggedUser: any = {};
 
-const postBlogToApi = (blog, expectedStatus = 201) => {
-  return api
+const postBlogToApi = (blog, expectedStatus = 201, withToken = true) => {
+  const request = api
     .post('/api/blogs/')
     .send(blog)
     .expect(expectedStatus)
     .expect('Content-Type', /application\/json/);
+
+  if (withToken) {
+    request.set('Authorization', `Bearer ${loggedUser.token}`);
+  }
+
+  return request;
 };
 
 beforeEach(async () => {
+  await User.deleteMany({});
+  for (const user of initialUsers) {
+    await api.post('/api/users').send(user);
+    if (user.name === 'Moshi') {
+      const response = await api.post('/api/login').send({ username: user.username, password: user.password });
+      loggedUser = response.body;
+    }
+  }
+
   await Blog.deleteMany({});
   for (const blog of initialBlogs) {
-    await new Blog(blog).save();
+    await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${loggedUser.token}`)
+      .send(blog);
   }
 });
 
@@ -33,16 +53,17 @@ describe('Blog API', () => {
     });
 
     test('adds new blogs to db', async () => {
-      const newBlog = {
+      const newBlog: IDehydratedBlog = {
         'title': 'Henri\'s tech blog',
         'author': 'Henri Väisänen',
         'url': 'henri.codes',
-        'likes': 5
+        'likes': 5,
       };
 
-      await postBlogToApi(newBlog);
+      await postBlogToApi(newBlog, 201, true);
 
-      const response = await api.get('/api/blogs/');
+      const response = await api
+        .get('/api/blogs/');
 
       const blogTitles = response.body.map(r => r.title);
 
@@ -66,7 +87,6 @@ describe('Blog API', () => {
       await postBlogToApi(blogWithoutLikes);
 
       const response = await api.get('/api/blogs/');
-
       const savedBlog = response.body.find(blog => blog.title === blogWithoutLikes.title);
 
       expect(savedBlog.likes).toBeDefined();
@@ -81,6 +101,7 @@ describe('Blog API', () => {
 
       await api
         .delete(`/api/blogs/${blog.id}`)
+        .set('Authorization', `Bearer ${loggedUser.token}`)
         .expect(204);
 
       const response = await api
@@ -102,7 +123,8 @@ describe('Blog API', () => {
 
       const returnedBlog = (await api
         .put(`/api/blogs/${blog.id}`)
-        .send(updatedBlog)
+        .set('Authorization', `Bearer ${loggedUser.token}`)
+        .send({ ...updatedBlog, user: updatedBlog.user.id })
         .expect(200)
         .expect('Content-Type', /application\/json/)).body;
 
@@ -124,6 +146,10 @@ describe('Blog API', () => {
       };
 
       await postBlogToApi(invalidBlog, 400);
+    });
+
+    test('attempt adding blog without bearer token', async () => {
+      await postBlogToApi(initialBlogs[0], 401, false);
     });
   });
 });

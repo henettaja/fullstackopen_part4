@@ -1,6 +1,7 @@
 import 'express-async-errors';
 import Blog from '../models/blog';
 import { IUser } from '../models/user';
+import middleware from '../utils/middleware';
 
 const blogsRouter = require('express').Router();
 
@@ -9,8 +10,12 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const user = request.user;
+
+  if ( !(request.body.title || request.body.url) ) {
+    return response.status(400).send({ 'error': 'Missing required fields' });
+  }
 
   const blog = new Blog({
     title: request.body.title,
@@ -26,13 +31,13 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const user = request.user;
   const idToRemove = request.params.id;
 
   const blogToDelete = await Blog.findOne({ _id: idToRemove });
 
-  if ( !blogToDelete || blogToDelete.user.toString() !== user.id.toString() ) {
+  if ( !blogToDelete || blogToDelete.user.toString() !== user.id ) {
     return response.status(401).send({ 'error': 'User does not have rights to delete requested blog' });
   }
   await blogToDelete.deleteOne();

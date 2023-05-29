@@ -1,12 +1,14 @@
-import { model, Schema, ObjectId } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
+
+export type IDehydratedBlog = Omit<IBlog, 'user' | 'id'>
 
 export interface IBlog {
   title: string;
   author: string;
   url: string;
   likes: number
-  id?: string;
-  user: ObjectId;
+  id: string;
+  user: Types.ObjectId;
 }
 
 const blogSchema = new Schema<IBlog>({

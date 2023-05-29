@@ -1,8 +1,8 @@
-import { IBlog } from '../models/blog';
+import { IBlog, IDehydratedBlog } from '../models/blog';
 import blogHelper from '../utils/blog_helper';
 import { IAuthor } from '../models/author';
 import { longListOfBlogs } from '../utils/blog_helper';
-import { Schema } from 'mongoose';
+import { Types } from 'mongoose';
 
 test('dummy returns one', () => {
   const blogs = [];
@@ -22,13 +22,13 @@ describe('total likes', function () {
   });
 
   test('when only one blog, equals the likes of that', () => {
-    const listWithOneBlog: IBlog[] = [
+    const listWithOneBlog: Omit<IBlog, 'id'>[] = [
       {
         title: 'React patterns',
         author: 'Michael Chan',
         url: 'https://reactpatterns.com/',
         likes: 7,
-        user: {} as Schema.Types.ObjectId
+        user: new Types.ObjectId('63d799c9388ba2728b4e9639')
       },
     ];
 
@@ -47,12 +47,11 @@ describe('total likes', function () {
 describe('most liked blog', function () {
   test('of a list of blogs returns right value', () => {
     const result = blogHelper.favoriteBlog(longListOfBlogs);
-    const expectedBlog: IBlog = {
+    const expectedBlog: IDehydratedBlog = {
       title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
       url: 'https://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
-      user: {} as Schema.Types.ObjectId
     };
 
     expect(result).toEqual(expectedBlog);
